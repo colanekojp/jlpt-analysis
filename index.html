@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>王可樂日語｜2025 第二回 JLPT 弱點分析書領取</title>
+  <style>
+    :root{
+      --bg:#f0f4ff;
+      --card:#fff;
+      --text:#111;
+      --muted:#667085;
+      --border:#e6e6e6;
+      --primary:#4f46e5;
+      --primaryText:#fff;
+      --danger:#ef4444;
+      --success:#10b981;
+      --shadow: 0 12px 30px rgba(79,70,229,.12);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:640px;margin:0 auto;padding:22px 14px 56px}
+
+    .topbar{
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 18px;
+      padding: 20px 18px;
+      box-shadow: var(--shadow);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .titleBlock h1{font-size:18px;line-height:1.35;margin:0;color:#fff}
+    .titleBlock .sub{color:rgba(255,255,255,.9);font-size:13px;line-height:1.6;margin:4px 0 0}
+
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px 16px;
+      margin-top:14px;
+      box-shadow: var(--shadow);
+    }
+
+    .pageTitle{font-size:18px;margin:0 0 6px;line-height:1.35}
+    .pageDesc{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 12px}
+
+    label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+    input{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid #cfd4dc;
+      font-size:16px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus{border-color:var(--primary); box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+    input:disabled{background:#f5f6f7;color:#555}
+
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    button{
+      flex:1;
+      min-width: 160px;
+      padding:13px 14px;
+      border-radius:14px;
+      border:0;
+      font-size:16px;
+      cursor:pointer;
+    }
+    .primary{background:var(--primary);color:var(--primaryText)}
+    .secondary{background:#f2f4f7;color:#111}
+    button:disabled{opacity:.6;cursor:not-allowed}
+
+    .msg{margin-top:12px;font-size:14px;line-height:1.65;white-space:pre-wrap}
+    .ok{color:var(--success)}
+    .bad{color:var(--danger)}
+
+    .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
+    .lv{
+      border:1px solid #cfd4dc;
+      border-radius:14px;
+      padding:12px 10px;
+      text-align:center;
+      cursor:pointer;
+      font-weight:800;
+      background:#fff;
+      user-select:none;
+    }
+    .lv small{display:block;font-weight:600;color:var(--muted);margin-top:4px}
+    .lv.active{border-color:var(--primary);background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#fff; box-shadow: 0 4px 12px rgba(79,70,229,.25)}
+    .lv.active small{color:rgba(255,255,255,.9)}
+
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      background:#f2f4f7;border:1px solid #e4e7ec;
+      color:#344054;font-size:13px;margin:6px 0 0;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+    }
+
+    .hint{
+      font-size:13px;color:var(--muted);line-height:1.65;
+      background:#fafafa;border:1px dashed #e4e7ec;border-radius:14px;
+      padding:10px 12px;margin-top:12px
+    }
+
+    .hidden{display:none}
+
+    @media(min-width:640px){
+      .wrap{padding:26px 14px 64px}
+      .titleBlock h1{font-size:20px}
+      .levels{grid-template-columns:repeat(5,1fr)}
+      button{flex:0 0 auto}
+    }
+
+    a{color:#111}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="titleBlock">
+        <h1>王可樂日語｜2025 第二回 JLPT 弱點分析書領取</h1>
+      </div>
+    </div>
+  </div>
+
+  <section id="page1" class="card">
+    <h2 class="pageTitle">選擇等級並填寫 Email</h2>
+
+    <label>選擇等級（一次領一個）</label>
+    <div class="levels" id="levels"></div>
+
+    <label>Email</label>
+    <input id="email" placeholder="user@example.com" autocomplete="email" />
+
+    <div class="btnRow">
+      <button id="btnSend" class="primary">寄送驗證碼</button>
+    </div>
+
+    <div id="msg1" class="msg"></div>
+  </section>
+
+  <section id="page2" class="card hidden">
+    <h2 class="pageTitle">輸入6個數字驗證碼</h2>
+    <input id="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="例如：123456" />
+
+    <div class="btnRow">
+      <button id="btnBack1" class="secondary">回上一步</button>
+      <button id="btnVerify" class="primary">驗證並查詢</button>
+    </div>
+
+    <div id="msg2" class="msg"></div>
+  </section>
+
+  <section id="page3" class="card hidden">
+    <h2 class="pageTitle">下載弱點分析書</h2>
+
+    <div class="pill" id="summary3">等級：N1　Email：—</div>
+
+    <div id="msg3" class="msg"></div>
+
+    <div class="btnRow">
+      <button id="btnDownload" class="primary hidden">下載弱點分析書（開新分頁）</button>
+      <button id="btnLine" class="secondary">私訊官方 LINE 找助教</button>
+      <button id="btnHome" class="secondary">回首頁領其他等級</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const API = {
+    request: "https://colanekojp.zeabur.app/webhook/otp/request",
+    verify:  "https://colanekojp.zeabur.app/webhook/otp/verify",
+    lookup:  "https://colanekojp.zeabur.app/webhook/lookup-link",
+  };
+
+  const LINE_URL = "https://page.line.me/ctq6019m?oat_content=url&openQrModal=true";
+  const HOME_URL = "https://jlptanalysis.zeabur.app/";
+
+  const state = { level: "N1", email: "", step: 0, downloadingUrl: "" };
+
+  const $ = (id) => document.getElementById(id);
+  const pages = [$("page1"), $("page2"), $("page3")];
+
+  function normalizeEmail(v){ return String(v || "").trim().toLowerCase(); }
+  function normalizeOtp(v){ return String(v || "").trim().replace(/[^0-9]/g, "").slice(0, 6); }
+
+  function setMsg(el, text, ok){
+    el.textContent = text;
+    el.className = "msg " + (ok ? "ok" : "bad");
+  }
+
+  function setLoading(loading){
+    [$("btnSend"), $("btnVerify"), $("btnBack1"), $("btnHome"), $("btnLine")].forEach(b => { if (b) b.disabled = loading; });
+    $("email").disabled = loading || state.step > 0;
+    $("otp").disabled = loading;
+    document.querySelectorAll(".lv").forEach(x => {
+      x.style.pointerEvents = (loading || state.step > 0) ? "none" : "auto";
+      x.style.opacity = (loading || state.step > 0) ? "0.6" : "1";
+    });
+  }
+
+  function updateSummaries(){
+    const email = state.email ? state.email : "—";
+    $("summary3").textContent = `等級：${state.level}　Email：${email}`;
+  }
+
+  function showPage(n){
+    state.step = n;
+    pages.forEach((p,i) => p.classList.toggle("hidden", i !== n));
+    updateSummaries();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const levels = ["N1","N2","N3","N4","N5"];
+  function renderLevels(){
+    const box = $("levels");
+    box.innerHTML = "";
+    levels.forEach(lv => {
+      const d = document.createElement("div");
+      d.className = "lv" + (state.level === lv ? " active" : "");
+      d.innerHTML = lv;
+      d.onclick = () => {
+        if (state.step > 0) return;
+        state.level = lv;
+        renderLevels();
+        updateSummaries();
+      };
+      box.appendChild(d);
+    });
+  }
+
+  async function post(url, body){
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    return r.json();
+  }
+
+  $("btnSend").onclick = async () => {
+    const email = normalizeEmail($("email").value);
+    if (!email) return setMsg($("msg1"), "請輸入 Email", false);
+
+    state.email = email;
+    updateSummaries();
+
+    setLoading(true);
+    setMsg($("msg1"), "寄送中…", true);
+
+    try{
+      const res = await post(API.request, { email });
+      if (!res.ok){
+        setLoading(false);
+        return setMsg($("msg1"), res.message || "寄送失敗，請稍後再試。", false);
+      }
+      setLoading(false);
+      showPage(1);
+    }catch(e){
+      setLoading(false);
+      setMsg($("msg1"), "系統忙碌中，請稍後再試。", false);
+    }
+  };
+
+  $("btnBack1").onclick = () => {
+    state.email = "";
+    $("email").value = "";
+    $("otp").value = "";
+    $("msg2").textContent = "";
+    showPage(0);
+  };
+
+  $("btnVerify").onclick = async () => {
+    const otp = normalizeOtp($("otp").value);
+    if (otp.length !== 6) return setMsg($("msg2"), "請輸入 6 碼驗證碼（只需要數字）", false);
+
+    setLoading(true);
+    setMsg($("msg2"), "驗證中…", true);
+
+    try{
+      const v = await post(API.verify, { email: state.email, otp });
+      if (!v.ok){
+        setLoading(false);
+        return setMsg($("msg2"), v.message || "驗證失敗，請重新輸入。", false);
+      }
+
+      const l = await post(API.lookup, { level: state.level, email: state.email });
+
+      // ✅ 先跳到結果頁（看起來更像官方流程）
+      showPage(2);
+
+      $("btnLine").onclick = () => window.open(LINE_URL, "_blank", "noopener,noreferrer");
+      $("btnHome").onclick = () => location.href = HOME_URL;
+
+      if (!l.ok){
+        setLoading(false);
+        setMsg($("msg3"), l.message || "查不到資料，請確認等級與 Email 是否正確。", false);
+        $("btnDownload").classList.add("hidden");
+        return;
+      }
+
+      const url = (l.data && l.data.url) || l.url || l.link || (l.data && l.data.link);
+      if (!url){
+        setLoading(false);
+        setMsg($("msg3"), "查詢成功但未取得下載連結，請私訊官方 LINE 由助教協助。", false);
+        $("btnDownload").classList.add("hidden");
+        return;
+      }
+
+      state.downloadingUrl = url;
+      setLoading(false);
+      setMsg($("msg3"), "✅ 已找到你的弱點分析書下載連結。", true);
+      $("btnDownload").classList.remove("hidden");
+      $("btnDownload").onclick = () => window.open(state.downloadingUrl, "_blank", "noopener,noreferrer");
+
+    }catch(e){
+      setLoading(false);
+      showPage(2);
+      setMsg($("msg3"), "系統忙碌中，請稍後再試。", false);
+      $("btnDownload").classList.add("hidden");
+      $("btnLine").onclick = () => window.open(LINE_URL, "_blank", "noopener,noreferrer");
+      $("btnHome").onclick = () => location.href = HOME_URL;
+    }
+  };
+
+  renderLevels();
+  updateSummaries();
+  showPage(0);
+</script>
+</body>
+</html>
