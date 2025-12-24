@@ -172,7 +172,17 @@
 
 </div>
 
-<script>
+<script type="module">
+  // OTP 開關：預設為 true，若環境變數為 "false" 則關閉
+  let OTP_ENABLED = true;
+  try {
+    if (import.meta.env?.VITE_OTP_ENABLED === "false") {
+      OTP_ENABLED = false;
+    }
+  } catch(e) {
+    // 非 Vite 環境，使用預設值 true
+  }
+
   const API = {
     request: "https://colanekojp.zeabur.app/webhook/otp/request",
     verify:  "https://colanekojp.zeabur.app/webhook/otp/verify",
@@ -244,6 +254,46 @@
     return r.json();
   }
 
+  async function handleLookupAndShowResult(){
+    // ✅ 先跳到結果頁（看起來更像官方流程）
+    showPage(2);
+
+    $("btnLine").onclick = () => window.open(LINE_URL, "_blank", "noopener,noreferrer");
+    $("btnHome").onclick = () => location.href = HOME_URL;
+
+    try{
+      const l = await post(API.lookup, { level: state.level, email: state.email });
+
+      if (!l.ok){
+        setLoading(false);
+        setMsg($("msg3"), l.message || "查不到資料，請確認等級與 Email 是否正確。", false);
+        $("btnDownload").classList.add("hidden");
+        return;
+      }
+
+      const url = (l.data && l.data.url) || l.url || l.link || (l.data && l.data.link);
+      if (!url){
+        setLoading(false);
+        setMsg($("msg3"), "查詢成功但未取得下載連結，請私訊官方 LINE 由助教協助。", false);
+        $("btnDownload").classList.add("hidden");
+        return;
+      }
+
+      state.downloadingUrl = url;
+      setLoading(false);
+      setMsg($("msg3"), "✅ 已找到你的弱點分析書下載連結。", true);
+      $("btnDownload").classList.remove("hidden");
+      $("btnDownload").onclick = () => window.open(state.downloadingUrl, "_blank", "noopener,noreferrer");
+
+    }catch(e){
+      setLoading(false);
+      setMsg($("msg3"), "系統忙碌中，請稍後再試。", false);
+      $("btnDownload").classList.add("hidden");
+      $("btnLine").onclick = () => window.open(LINE_URL, "_blank", "noopener,noreferrer");
+      $("btnHome").onclick = () => location.href = HOME_URL;
+    }
+  }
+
   $("btnSend").onclick = async () => {
     const email = normalizeEmail($("email").value);
     if (!email) return setMsg($("msg1"), "請輸入 Email", false);
@@ -252,6 +302,15 @@
     updateSummaries();
 
     setLoading(true);
+
+    // 免 OTP 模式：直接 lookup 並跳到 page3
+    if (!OTP_ENABLED){
+      setMsg($("msg1"), "查詢中…", true);
+      await handleLookupAndShowResult();
+      return;
+    }
+
+    // OTP 模式：寄送驗證碼並跳到 page2
     setMsg($("msg1"), "寄送中…", true);
 
     try{
@@ -290,34 +349,8 @@
         return setMsg($("msg2"), v.message || "驗證失敗，請重新輸入。", false);
       }
 
-      const l = await post(API.lookup, { level: state.level, email: state.email });
-
-      // ✅ 先跳到結果頁（看起來更像官方流程）
-      showPage(2);
-
-      $("btnLine").onclick = () => window.open(LINE_URL, "_blank", "noopener,noreferrer");
-      $("btnHome").onclick = () => location.href = HOME_URL;
-
-      if (!l.ok){
-        setLoading(false);
-        setMsg($("msg3"), l.message || "查不到資料，請確認等級與 Email 是否正確。", false);
-        $("btnDownload").classList.add("hidden");
-        return;
-      }
-
-      const url = (l.data && l.data.url) || l.url || l.link || (l.data && l.data.link);
-      if (!url){
-        setLoading(false);
-        setMsg($("msg3"), "查詢成功但未取得下載連結，請私訊官方 LINE 由助教協助。", false);
-        $("btnDownload").classList.add("hidden");
-        return;
-      }
-
-      state.downloadingUrl = url;
-      setLoading(false);
-      setMsg($("msg3"), "✅ 已找到你的弱點分析書下載連結。", true);
-      $("btnDownload").classList.remove("hidden");
-      $("btnDownload").onclick = () => window.open(state.downloadingUrl, "_blank", "noopener,noreferrer");
+      // 驗證成功後進行 lookup
+      await handleLookupAndShowResult();
 
     }catch(e){
       setLoading(false);
