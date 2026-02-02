@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>王可樂日語｜2025 第二回 JLPT 弱點分析書領取</title>
+  <title>王可樂日語｜ JLPT 弱點分析書領取</title>
   <style>
     :root{
       --bg:#f0f4ff;
@@ -77,7 +77,7 @@
     .bad{color:var(--danger)}
 
     .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-    .lv{
+    .lv,.rd{
       border:1px solid #cfd4dc;
       border-radius:14px;
       padding:12px 10px;
@@ -87,9 +87,9 @@
       background:#fff;
       user-select:none;
     }
-    .lv small{display:block;font-weight:600;color:var(--muted);margin-top:4px}
-    .lv.active{border-color:var(--primary);background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#fff; box-shadow: 0 4px 12px rgba(79,70,229,.25)}
-    .lv.active small{color:rgba(255,255,255,.9)}
+    .lv small,.rd small{display:block;font-weight:600;color:var(--muted);margin-top:4px}
+    .lv.active,.rd.active{border-color:var(--primary);background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#fff; box-shadow: 0 4px 12px rgba(79,70,229,.25)}
+    .lv.active small,.rd.active small{color:rgba(255,255,255,.9)}
 
     .pill{
       display:inline-flex;align-items:center;gap:8px;
@@ -100,9 +100,16 @@
     }
 
     .hint{
-      font-size:13px;color:var(--muted);line-height:1.65;
-      background:#fafafa;border:1px dashed #e4e7ec;border-radius:14px;
-      padding:10px 12px;margin-top:12px
+      font-size:14px;color:#344054;line-height:1.7;
+      background:#f5f4ff;border:1px dashed #c4b5fd;border-radius:14px;
+      padding:10px 12px;margin-top:12px;font-weight:500;
+    }
+
+    .errorTitle{
+      font-size:18px;
+      line-height:1.6;
+      color:var(--danger);
+      margin-bottom:8px;
     }
 
     .hidden{display:none}
@@ -123,19 +130,32 @@
   <div class="topbar">
     <div class="brand">
       <div class="titleBlock">
-        <h1>王可樂日語｜2025 第二回 JLPT 弱點分析書領取</h1>
+        <h1>王可樂日語｜ JLPT 弱點分析書領取</h1>
       </div>
     </div>
   </div>
 
   <section id="page1" class="card">
-    <h2 class="pageTitle">選擇等級並填寫 Email</h2>
+    <h2 class="pageTitle">選擇考試回數與等級並填寫當初登記弱點分析書的 Email</h2>
+    <p class="pageDesc">
+      1. 先選擇你當初報名的「考試回數」與「等級」。<br>
+      2. 再輸入當初登記領取弱點分析書的 Email，我們會寄出驗證碼給你。<br>
+      3. 收到驗證碼後，下一步輸入驗證碼即可查詢下載連結。
+    </p>
 
-    <label>選擇等級（一次領一個）</label>
+    <label>選擇考試回數（一定要跟當初報名的回數一樣）</label>
+    <div class="levels" id="rounds"></div>
+
+    <p class="hint">
+      <strong>更早以前的考試</strong>若要查詢弱點分析書，請私訊官方 LINE 由助教協助。<br>
+      <a href="https://page.line.me/ctq6019m?oat_content=url&openQrModal=true" target="_blank" rel="noopener noreferrer">👉 點這裡開啟官方 LINE</a>
+    </p>
+
+    <label>選擇等級（一次領一個，需與當初報名等級一致）</label>
     <div class="levels" id="levels"></div>
 
-    <label>Email</label>
-    <input id="email" placeholder="user@example.com" autocomplete="email" />
+    <label>當初登記弱點分析書的 Email</label>
+    <input id="email" placeholder="例如：user@example.com" autocomplete="email" />
 
     <div class="btnRow">
       <button id="btnSend" class="primary">寄送驗證碼</button>
@@ -145,7 +165,12 @@
   </section>
 
   <section id="page2" class="card hidden">
-    <h2 class="pageTitle">輸入6個數字驗證碼</h2>
+    <h2 class="pageTitle">輸入 Email 中收到的 6 個數字驗證碼</h2>
+    <p class="pageDesc">
+      請打開剛剛填寫的 Email 信箱，找到系統寄出的驗證信，<br>
+      把信中顯示的 6 個數字驗證碼完整照著輸入在下面欄位。
+    </p>
+    <label>填寫信箱收到的 6 個數字驗證碼</label>
     <input id="otp" inputmode="numeric" autocomplete="one-time-code" placeholder="例如：123456" />
 
     <div class="btnRow">
@@ -157,9 +182,9 @@
   </section>
 
   <section id="page3" class="card hidden">
-    <h2 class="pageTitle">下載弱點分析書</h2>
+    <h2 id="title3" class="pageTitle">下載弱點分析書</h2>
 
-    <div class="pill" id="summary3">等級：N1　Email：—</div>
+    <div class="pill" id="summary3">回數：2025第二回　等級：N1　Email：—</div>
 
     <div id="msg3" class="msg"></div>
 
@@ -192,11 +217,11 @@
   const LINE_URL = "https://page.line.me/ctq6019m?oat_content=url&openQrModal=true";
   const HOME_URL = "https://jlptanalysis.zeabur.app/";
 
-  const state = { level: "N1", email: "", step: 0, downloadingUrl: "" };
+  const state = { round: "2025第二回", level: "N1", email: "", step: 0, downloadingUrl: "" };
 
   const $ = (id) => document.getElementById(id);
   const pages = [$("page1"), $("page2"), $("page3")];
-
+ 
   function normalizeEmail(v){ return String(v || "").trim().toLowerCase(); }
   function normalizeOtp(v){ return String(v || "").trim().replace(/[^0-9]/g, "").slice(0, 6); }
 
@@ -209,7 +234,7 @@
     [$("btnSend"), $("btnVerify"), $("btnBack1"), $("btnHome"), $("btnLine")].forEach(b => { if (b) b.disabled = loading; });
     $("email").disabled = loading || state.step > 0;
     $("otp").disabled = loading;
-    document.querySelectorAll(".lv").forEach(x => {
+    document.querySelectorAll(".lv, .rd").forEach(x => {
       x.style.pointerEvents = (loading || state.step > 0) ? "none" : "auto";
       x.style.opacity = (loading || state.step > 0) ? "0.6" : "1";
     });
@@ -217,7 +242,7 @@
 
   function updateSummaries(){
     const email = state.email ? state.email : "—";
-    $("summary3").textContent = `等級：${state.level}　Email：${email}`;
+    $("summary3").textContent = `回數：${state.round}　等級：${state.level}　Email：${email}`;
   }
 
   function showPage(n){
@@ -225,6 +250,24 @@
     pages.forEach((p,i) => p.classList.toggle("hidden", i !== n));
     updateSummaries();
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  const rounds = ["2025第二回","2025第一回","2024第二回","2024第一回","2023第二回","2023第一回"];
+  function renderRounds(){
+    const box = $("rounds");
+    box.innerHTML = "";
+    rounds.forEach(r => {
+      const d = document.createElement("div");
+      d.className = "rd" + (state.round === r ? " active" : "");
+      d.innerHTML = r;
+      d.onclick = () => {
+        if (state.step > 0) return;
+        state.round = r;
+        renderRounds();
+        updateSummaries();
+      };
+      box.appendChild(d);
+    });
   }
 
   const levels = ["N1","N2","N3","N4","N5"];
@@ -262,12 +305,35 @@
     $("btnHome").onclick = () => location.href = HOME_URL;
 
     try{
-      const l = await post(API.lookup, { level: state.level, email: state.email });
+      const l = await post(API.lookup, { round: state.round, level: state.level, email: state.email });
+
+      // 重置標題樣式為預設「下載弱點分析書」
+      const title3 = $("title3");
+      if (title3){
+        title3.textContent = "下載弱點分析書";
+        title3.classList.remove("errorTitle");
+      }
 
       if (!l.ok){
         setLoading(false);
-        setMsg($("msg3"), l.message || "查不到資料，請確認等級與 Email 是否正確。", false);
+
+        // 如果是 NOT_FOUND，就把大標改成提示句，字體加大
+        if (l.code === "NOT_FOUND" || l.code === "not_found"){
+          if (title3){
+            title3.textContent = "查不到資料，請確認您選擇的考試回數、等級，以及填寫的會員 Email 是否與當初登記時相同。";
+            title3.classList.add("errorTitle");
+          }
+          $("msg3").textContent = "";
+        } else {
+          setMsg($("msg3"), l.message || "系統忙碌中，請稍後再試。", false);
+        }
+
         $("btnDownload").classList.add("hidden");
+
+        // 若後端有提供支援連結，就用後端的
+        if (l.support && l.support.url){
+          $("btnLine").onclick = () => window.open(l.support.url, "_blank", "noopener,noreferrer");
+        }
         return;
       }
 
@@ -362,6 +428,7 @@
     }
   };
 
+  renderRounds();
   renderLevels();
   updateSummaries();
   showPage(0);
