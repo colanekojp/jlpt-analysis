@@ -307,10 +307,13 @@
       if (!l.ok){
         setLoading(false);
 
-        // 如果是 NOT_FOUND，就把大標改成提示句，字體加大
-        if (l.code === "NOT_FOUND" || l.code === "not_found"){
+        // NOT_READY / NOT_FOUND：把訊息放到大標，隱藏下載按鈕，不出現「下載」字樣
+        if (l.code === "NOT_READY" || l.code === "not_ready" || l.code === "NOT_FOUND" || l.code === "not_found"){
           if (title3){
-            title3.textContent = "查不到資料，請確認您選擇的考試回數、等級，以及填寫的會員 Email 是否與當初登記時相同。";
+            const msg = l.message || (l.code && l.code.toUpperCase() === "NOT_FOUND"
+              ? "查不到資料，請確認您選擇的考試回數、等級，以及填寫的會員 Email 是否與當初登記時相同。"
+              : "目前尚無可下載的弱點分析書，如有疑問請私訊官方 LINE 由助教協助。");
+            title3.textContent = msg;
             title3.classList.add("errorTitle");
           }
           $("msg3").textContent = "";
