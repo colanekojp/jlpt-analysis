@@ -198,16 +198,6 @@
 </div>
 
 <script type="module">
-  // OTP 開關：預設為 true，若環境變數為 "false" 則關閉
-  let OTP_ENABLED = true;
-  try {
-    if (import.meta.env?.VITE_OTP_ENABLED === "false") {
-      OTP_ENABLED = false;
-    }
-  } catch(e) {
-    // 非 Vite 環境，使用預設值 true
-  }
-
   const API = {
     request: "https://colanekojp.zeabur.app/webhook/otp/request",
     verify:  "https://colanekojp.zeabur.app/webhook/otp/verify",
@@ -368,15 +358,6 @@
     updateSummaries();
 
     setLoading(true);
-
-    // 免 OTP 模式：直接 lookup 並跳到 page3
-    if (!OTP_ENABLED){
-      setMsg($("msg1"), "查詢中…", true);
-      await handleLookupAndShowResult();
-      return;
-    }
-
-    // OTP 模式：寄送驗證碼並跳到 page2
     setMsg($("msg1"), "寄送中…", true);
 
     try{
