@@ -44,6 +44,7 @@
 
     .pageTitle{font-size:18px;margin:0 0 6px;line-height:1.35}
     .pageDesc{color:var(--muted);font-size:14px;line-height:1.65;margin:0 0 12px}
+    #desc3{font-size:16px;color:#111;line-height:1.65;margin:0 0 12px}
 
     label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
     input{
@@ -182,14 +183,17 @@
   </section>
 
   <section id="page3" class="card hidden">
-    <h2 id="title3" class="pageTitle">下載弱點分析書</h2>
+    <h2 id="title3" class="pageTitle">已找到你的弱點分析書</h2>
 
     <div class="pill" id="summary3">回數：2025第二回　等級：N1　Email：—</div>
 
+    <p id="desc3" class="pageDesc">
+      請點按鈕另開視窗查看後儘速下載，<strong>檔案僅保留七天</strong>。
+    </p>
     <div id="msg3" class="msg"></div>
 
     <div class="btnRow">
-      <button id="btnDownload" class="primary hidden">下載弱點分析書（開新分頁）</button>
+      <button id="btnDownload" class="primary hidden">開啟弱點分析書（另開視窗）</button>
       <button id="btnLine" class="secondary">私訊官方 LINE 找助教</button>
       <button id="btnHome" class="secondary">回首頁領其他等級</button>
     </div>
@@ -297,12 +301,14 @@
     try{
       const l = await post(API.lookup, { round: state.round, level: state.level, email: state.email });
 
-      // 重置標題樣式為預設「下載弱點分析書」
+      // 重置標題與說明為預設（成功狀態）
       const title3 = $("title3");
       if (title3){
-        title3.textContent = "下載弱點分析書";
+        title3.textContent = "已找到你的弱點分析書";
         title3.classList.remove("errorTitle");
       }
+      const desc3El = $("desc3");
+      if (desc3El) desc3El.classList.add("hidden");
 
       if (!l.ok){
         setLoading(false);
@@ -322,6 +328,7 @@
         }
 
         $("btnDownload").classList.add("hidden");
+        if (desc3El) desc3El.classList.add("hidden");
 
         // 若後端有提供支援連結，就用後端的
         if (l.support && l.support.url){
@@ -340,7 +347,9 @@
 
       state.downloadingUrl = url;
       setLoading(false);
-      setMsg($("msg3"), "✅ 已找到你的弱點分析書下載連結。", true);
+      $("msg3").textContent = "";
+      $("msg3").className = "msg";
+      if (desc3El) desc3El.classList.remove("hidden");
       $("btnDownload").classList.remove("hidden");
       $("btnDownload").onclick = () => window.open(state.downloadingUrl, "_blank", "noopener,noreferrer");
 
